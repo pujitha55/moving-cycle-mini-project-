@@ -1,0 +1,111 @@
+#include <GL/glut.h>
+#include <iostream>
+#include <unistd.h>
+#include <math.h>
+
+
+using namespace std;
+
+int posX = 0;
+
+void display() {
+ glClear(GL_COLOR_BUFFER_BIT);
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+ glColor3f(1.0f, 2.0f, 1.0f); 
+	glRasterPos2f(-1.5, 5.0); 
+	for (int i = 0; i < 8; i++) 
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, "11913542"[i]);
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+
+ // Draw a white road
+ glColor3f(1.0f, 1.0f, 1.0f);
+ glBegin(GL_POLYGON);
+ glVertex2f(-1.7f, -0.3f);
+ glVertex2f(-1.7f, -0.4f);
+ glVertex2f(3.5f, -0.4f);
+ glVertex2f(3.5f, -0.3f);
+ glEnd();
+
+ // Draw cycle frame
+ glColor3f(0.0f, 0.0f, 0.0f); 
+ glScalef(0.99, 1.0, 0.7); 
+ glTranslatef(-0.02, -0.09, 0.0);
+	glTranslatef(0.01 * posX, 0.0, 0.0); // set the color to black
+ glRotatef(118.0f, 0.0f, 0.0f, 1.0f); // rotate the frame by 45 degrees around the z-axis
+ glBegin(GL_LINE_LOOP); // begin drawing a line loop
+ glVertex2f(-0.1f, 0.0f); // set the vertices of the line loop
+ glVertex2f(0.0f, 0.2f);
+ glVertex2f(0.1f, 0.0f);
+ glVertex2f(0.0f, -0.2f);
+ glEnd();
+
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+
+ glColor3f(0.0, 0.0, 0.0); // set the color to blue
+ glTranslatef(0.53, 0.03, 0.0);
+ glTranslatef(0.01 * posX, 0.0, 0.0);
+ glRotatef(148.0f, 0.0f, 0.0f, 1.0f);
+ glBegin(GL_LINES);
+ glVertex2f(0.7, 0.1);
+ glVertex2f(0.1, 0.35);
+ glEnd();
+ 
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+ glColor3f(0.0, 0.0, 0.0); // set the color to blue
+ glTranslatef(-0.2, 0.13, 0.0);
+ glTranslatef(0.01 * posX, 0.0, 0.0);
+ glRotatef(50.0f, 0.0f, 0.0f, 1.0f);
+ glBegin(GL_LINES);
+ glVertex2f(0.2, 0.05);
+ glVertex2f(0.08, 0.15);
+ glEnd();
+
+ 
+ glMatrixMode(GL_MODELVIEW);
+ glLoadIdentity();
+ // Draw wheels
+ glColor3f(0.0f, 0.0f, 0.0f);
+ glTranslatef(-0.28f, -0.2f, 0.0f);
+ glTranslatef(0.01 * posX, 0.0, 0.0);
+ glutSolidTorus(-0.01f, 0.09f, 10, 20);
+ glTranslatef(0.50f, 0.0f, 0.0f);
+ glutSolidTorus(-0.01f, 0.09f, 10, 20);
+
+ // Move cycle
+ glPushMatrix();
+ glTranslatef(posX, 0.0, 0.0);
+ glPopMatrix();
+
+ glFlush();
+}
+
+void timer(int) {
+ glutPostRedisplay();
+ glutTimerFunc(1000/60, timer, 0);
+
+ // Update cycle position
+ if (posX > 200) {
+ posX = 200;
+ }
+ posX += 1;
+}
+
+int main(int argc, char** argv) {
+ glutInit(&argc, argv);
+ glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+ glutInitWindowSize(900, 450);
+ glutInitWindowPosition(150, 150);
+ glutCreateWindow("Moving cycle");
+ glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+ glMatrixMode(GL_PROJECTION);
+ glLoadIdentity();
+ gluOrtho2D(-2.0, 4.5, -1.5, 6.0);
+ glutDisplayFunc(display);
+ glutTimerFunc(0, timer, 0);
+ glutMainLoop();
+ return 0;
+}
